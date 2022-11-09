@@ -1,0 +1,6 @@
+package com.example.string_parser
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
