@@ -21,7 +21,7 @@ class Parser {
           BlockWidget.heading(
             blockType: BlockType.heading,
             headingType: HeadingType.h2,
-            text: line,
+            text: line.replaceFirst(RegExp(r'^(#{1,3}) '), ''),
           ),
         );
       } else if (_isUnorderedList(line)) {
@@ -57,20 +57,39 @@ class Parser {
     for (int i = 0; i < text.length; i++) {
       if (text[i] == '#') {
         if (!boldOpened) {
-          children.add(
-            InlineWidget(
-              inlineType: InlineType.regular,
-              text: temp,
-            ),
-          );
+          if (italicOpened) {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.italic,
+                text: temp,
+              ),
+            );
+          } else {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.regular,
+                text: temp,
+              ),
+            );
+          }
           temp = '';
         } else {
-          children.add(
-            InlineWidget(
-              inlineType: InlineType.bold,
-              text: temp,
-            ),
-          );
+          if (italicOpened) {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.boldItalic,
+                text: temp,
+              ),
+            );
+          } else {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.bold,
+                text: temp,
+              ),
+            );
+          }
+
           temp = '';
         }
 
@@ -78,20 +97,40 @@ class Parser {
         continue;
       } else if (text[i] == '*') {
         if (!italicOpened) {
-          children.add(
-            InlineWidget(
-              inlineType: InlineType.regular,
-              text: temp,
-            ),
-          );
+          if (boldOpened) {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.bold,
+                text: temp,
+              ),
+            );
+          } else {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.regular,
+                text: temp,
+              ),
+            );
+          }
+
           temp = '';
         } else {
-          children.add(
-            InlineWidget(
-              inlineType: InlineType.italic,
-              text: temp,
-            ),
-          );
+          if (boldOpened) {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.boldItalic,
+                text: temp,
+              ),
+            );
+          } else {
+            children.add(
+              InlineWidget(
+                inlineType: InlineType.italic,
+                text: temp,
+              ),
+            );
+          }
+
           temp = '';
         }
 
