@@ -40,7 +40,20 @@ class BlockWidget extends BlockElement {
         ),
       );
     } else if (blockType == BlockType.unorderedList) {
-      widgets.add(const Text('- '));
+      widgets.add(
+        Container(
+          margin: const EdgeInsets.only(
+            right: 5.0,
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.black,
+            shape: BoxShape.circle,
+          ),
+          height: 6,
+          width: 6,
+          alignment: Alignment.center,
+        ),
+      );
     }
 
     if (children != null) {
@@ -86,14 +99,18 @@ class InlineWidget extends InlineElement {
       parent?.spans.add(
         TextSpan(
           text: text,
-          style: style,
+          style: style.copyWith(
+            height: 1.5,
+          ),
         ),
       );
     }
     parent?.widgets.add(
       Text(
         text,
-        style: style,
+        style: style.copyWith(
+          height: 1.5,
+        ),
       ),
     );
   }

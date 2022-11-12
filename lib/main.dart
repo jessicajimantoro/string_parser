@@ -19,10 +19,13 @@ class MyApp extends StatelessWidget {
       ),
       home: SafeArea(
         child: Scaffold(
-          body: CPBuilder(
-            unparsedString:
-                '### Aku adalah anak gembala\n*Selalu #\\#riang# serta* gembira\n- Karena #aku# senang *bekerja*\n- Tak pernah malas ataupun lelach',
-            visitor: WidgetVisitor(),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: CPBuilder(
+              unparsedString:
+                  '### Aku adalah anak gembala\n*Selalu #\\#riang# serta* gembira\n- Karena #aku# senang *bekerja*\n- Tak pernah malas ataupun lelach',
+              visitor: WidgetVisitor(),
+            ),
           ),
         ),
       ),
