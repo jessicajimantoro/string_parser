@@ -1,10 +1,11 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:string_parser/ast.dart';
 import 'package:string_parser/widgets/heading_widget.dart';
 
 class BlockWidget extends BlockElement {
   String text;
   List<Widget> widgets = [];
+  List<TextSpan> spans = [];
 
   HeadingType? _headingType;
 
@@ -64,19 +65,37 @@ class InlineWidget extends InlineElement {
 
   @override
   void accept(NodeVisitor visitor, [BlockWidget? parent]) {
-    Widget widget = Text(text);
+    TextStyle style = const TextStyle();
 
     if (inlineType == InlineType.bold) {
-      widget = Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
+      style = const TextStyle(
+        fontWeight: FontWeight.bold,
+      );
+    } else if (inlineType == InlineType.italic) {
+      style = const TextStyle(
+        fontStyle: FontStyle.italic,
+      );
+    } else if (inlineType == InlineType.boldItalic) {
+      style = const TextStyle(
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.bold,
       );
     }
 
-    parent?.widgets.add(widget);
-    print(parent?.widgets);
+    if (parent?.blockType == BlockType.paragraph) {
+      parent?.spans.add(
+        TextSpan(
+          text: text,
+          style: style,
+        ),
+      );
+    }
+    parent?.widgets.add(
+      Text(
+        text,
+        style: style,
+      ),
+    );
   }
 }
 
@@ -97,6 +116,15 @@ class WidgetVisitor extends NodeVisitor {
       _children.add(
         Row(
           children: blockElement.widgets,
+        ),
+      );
+    } else if (blockElement.blockType == BlockType.paragraph) {
+      _children.add(
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.black),
+            children: blockElement.spans,
+          ),
         ),
       );
     } else {
