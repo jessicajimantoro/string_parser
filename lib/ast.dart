@@ -64,15 +64,3 @@ abstract class NodeVisitor {
   void visitBlockElement(BlockElement blockElement);
   void visitInlineElement(InlineElement inlineElement);
 }
-
-class AstElementVisitor implements NodeVisitor {
-  @override
-  void visitBlockElement(BlockElement blockElement) {
-    blockElement.accept(this);
-  }
-
-  @override
-  void visitInlineElement(InlineElement inlineElement) {
-    inlineElement.accept(this);
-  }
-}
