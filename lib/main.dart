@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         child: Scaffold(
           body: CPBuilder(
             unparsedString:
-                '### Aku adalah anak gembala\n*Selalu #riang# serta* gembira\n- Karena #aku# senang *bekerja*\n- Tak pernah malas ataupun lelach',
+                '### Aku adalah anak gembala\n*Selalu #\\#riang# serta* gembira\n- Karena #aku# senang *bekerja*\n- Tak pernah malas ataupun lelach',
             visitor: WidgetVisitor(),
           ),
         ),

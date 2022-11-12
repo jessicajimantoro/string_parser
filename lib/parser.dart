@@ -55,6 +55,11 @@ class Parser {
     bool italicOpened = false;
 
     for (int i = 0; i < text.length; i++) {
+      if (text[i] == '\\' &&
+          (i != text.length - 1 &&
+              (text[i + 1] == '#' || text[i + 1] == '*'))) {
+        continue;
+      }
       if (text[i] == '#') {
         if (!boldOpened) {
           if (italicOpened) {
