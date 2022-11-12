@@ -46,6 +46,6 @@ void main() {
 
     WidgetVisitor widgetVisitor = WidgetVisitor();
     widgetVisitor.visitBlockElement(root);
-    print(widgetVisitor.widgets);
+    print(widgetVisitor.widget);
   });
 }

@@ -1,32 +1,53 @@
 import 'package:flutter/widgets.dart';
 import 'package:string_parser/ast.dart';
+import 'package:string_parser/widgets/heading_widget.dart';
 
 class BlockWidget extends BlockElement {
-  String rawText;
+  String text;
+  List<Widget> widgets = [];
+
+  HeadingType? _headingType;
 
   BlockWidget({
     required BlockType blockType,
     List<Node>? children,
-    this.rawText = '',
+    this.text = '',
   }) : super(
           blockType: blockType,
           children: children,
         );
 
+  BlockWidget.heading({
+    required BlockType blockType,
+    required HeadingType headingType,
+    List<Node>? children,
+    this.text = '',
+  }) : super(
+          blockType: blockType,
+          children: children,
+        ) {
+    _headingType = headingType;
+  }
+
   @override
-  void accept(NodeVisitor visitor) {
-    print('block widget $blockType visited!');
-    List<Widget> widgets = <Widget>[];
+  void accept(NodeVisitor visitor, [BlockWidget? parent]) {
+    if (blockType == BlockType.heading) {
+      widgets.add(
+        HeadingWidget.widget(
+          headingType: _headingType ?? HeadingType.h1,
+          text: text,
+        ),
+      );
+    } else if (blockType == BlockType.unorderedList) {
+      widgets.add(const Text('- '));
+    }
 
     if (children != null) {
       for (Node child in children!) {
         if (child is BlockWidget) {
-          visitor.visitBlockElement(child);
+          (visitor as WidgetVisitor).visitBlockElement(child, this);
         } else if (child is InlineWidget) {
-          widgets.add(
-            Text(child.rawText),
-          );
-          visitor.visitInlineElement(child);
+          (visitor as WidgetVisitor).visitInlineElement(child, this);
         }
       }
     }
@@ -34,31 +55,57 @@ class BlockWidget extends BlockElement {
 }
 
 class InlineWidget extends InlineElement {
-  String rawText;
+  String text;
 
   InlineWidget({
     required InlineType inlineType,
-    this.rawText = '',
+    this.text = '',
   }) : super(inlineType: inlineType);
 
   @override
-  void accept(NodeVisitor visitor) {
-    print('inline widget $inlineType visited!');
+  void accept(NodeVisitor visitor, [BlockWidget? parent]) {
+    Widget widget = Text(text);
+
+    if (inlineType == InlineType.bold) {
+      widget = Text(
+        text,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
+
+    parent?.widgets.add(widget);
+    print(parent?.widgets);
   }
 }
 
 class WidgetVisitor extends NodeVisitor {
-  List<Widget> _widgets = [];
+  final List<Widget> _children = [];
 
-  List<Widget> get widgets => _widgets;
+  Widget get widget => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _children,
+      );
+  List<Widget> get children => _children;
 
   @override
-  void visitBlockElement(BlockElement blockElement) {
-    (blockElement as BlockWidget).accept(this);
+  void visitBlockElement(BlockElement blockElement, [BlockWidget? parent]) {
+    (blockElement as BlockWidget).accept(this, parent);
+
+    if (blockElement.blockType == BlockType.unorderedList) {
+      _children.add(
+        Row(
+          children: blockElement.widgets,
+        ),
+      );
+    } else {
+      _children.addAll(blockElement.widgets);
+    }
   }
 
   @override
-  void visitInlineElement(InlineElement inlineElement) {
-    (inlineElement as InlineWidget).accept(this);
+  void visitInlineElement(InlineElement inlineElement, [BlockWidget? parent]) {
+    (inlineElement as InlineWidget).accept(this, parent);
   }
 }
