@@ -11,6 +11,7 @@ enum InlineType {
   regular,
   bold,
   italic,
+  boldItalic,
 }
 
 abstract class Node {
