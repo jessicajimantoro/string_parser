@@ -121,6 +121,7 @@ class WidgetVisitor extends NodeVisitor {
 
   Widget get widget => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: _children,
       );
   List<Widget> get children => _children;
